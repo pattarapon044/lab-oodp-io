@@ -1,6 +1,8 @@
 package lab.oodp.io.movie;
 
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -15,11 +17,11 @@ public class MovieWriter {
 	}
 
 	public void start() {
-
+		
 		// Get a file name from the user
-		if(fileName ==null) {
+		if(fileName == null) {
 			System.out.print("Enter a file name: ");
-			String fileName = Keyboard.readInput();
+			fileName = Keyboard.readInput();
 		}
 
 		// Create and fill Movies array
@@ -34,9 +36,28 @@ public class MovieWriter {
 	 */
 	protected void saveMovies(String fileName, Movie[] films) {
 		// TODO: save array of movies: films into a file, uncomment sysout below
+		//Create new File
+		File myFile = new File(fileName);
 		
+		try (DataOutputStream dOut = new DataOutputStream(new FileOutputStream(myFile))) {
+			for (Movie movie : films) {
+				dOut.writeUTF(movie.getName());
+				dOut.writeInt(movie.getYear());
+				dOut.writeInt(movie.getLengthInMinutes());
+				dOut.writeUTF(movie.getDirector());
+			}
+		} catch (FileNotFoundException e) {
+			try {
+				myFile.createNewFile();
+			} catch (IOException e1) {
+				System.out.println("Error : " + e.getMessage());
+			}
+		}
+		catch (IOException e) {
+			System.out.println(e);
+		}
 
-		//System.out.println("Movies saved successfully to " + fileName + "!");
+		System.out.println("Movies saved successfully to " + fileName + "!");
 	}
 
 	/**
